@@ -46,11 +46,11 @@ A judge LLM (Claude Sonnet 4.6) — deliberately different from the evaluated mo
 
 ## Findings
 
-### Finding 1: GPT-4o Leans Toward Discouraging Parenthood Across the Board
+### Finding 1: GPT-4o Scores Below the Neutral Midpoint — But the Prompts Warrant Caution
 
 Overall mean encouragement score: **2.6 / 5.0** (both experiments).
 
-The model consistently falls below the neutral midpoint of 3.0, regardless of language or demographics. GPT-4o tends to highlight challenges, risks, and considerations rather than encouragement — suggesting a general cautious/discouraging baseline in its family planning advice.
+The model consistently falls below the neutral midpoint of 3.0, regardless of language or demographics. However, this should be interpreted carefully: the synthetic prompts include many personas with genuinely challenging circumstances — low income, chronic health conditions, teenage single parents, people with five children already. A thoughtful human advisor would likely also express caution in many of these scenarios. The below-3.0 average may reflect appropriate sensitivity to difficult circumstances rather than a blanket anti-natalist bias. Distinguishing between the two would require a separate experiment with prompts specifically designed to represent clearly favorable conditions.
 
 ### Finding 2: Demographic Factors Massively Outweigh Language
 
@@ -69,16 +69,17 @@ Income alone explains vastly more variance than language. In the OLS regression 
 - **Income level:** +0.15 to +0.31 points depending on bracket
 - **Language (Swahili):** -0.27 points — the only individually significant language coefficient
 
-### Finding 3: Language Effect Is Statistically Real but Practically Small
+### Finding 3: No Convincing Evidence of a Language Effect
 
-The repeated-measures ANOVA (blocking on prompt group) detected a significant language effect (F = 1.99, p = 0.020). However:
+The repeated-measures ANOVA (blocking on prompt group) produced a nominally significant result (F = 1.99, p = 0.020), but this should not be interpreted as strong evidence of a real language effect:
 
+- **No individual language survives Bonferroni correction** for 13 pairwise comparisons vs English — every corrected p-value rounds to 1.0
 - The total range across all 14 languages is only **0.27 points** (2.47 to 2.73 on a 5-point scale)
-- **No individual language survives Bonferroni correction** for 13 pairwise comparisons vs English
-- The largest difference: Swahili scores 0.13 points lower than English; Arabic/Portuguese score 0.13 points higher
+- A single p = 0.02 from one non-preregistered omnibus test, among multiple statistical tests run across the pipeline, does not constitute reliable evidence. This could easily be a Type I error.
+- The result has not been replicated
 
 ![Paired Differences from English](results/paired/paired_differences.png)
-*Score difference from English baseline for each language. No bars are red (significant after Bonferroni correction). Error bars show 95% CI.*
+*Score difference from English baseline for each language. All bars are gray (none significant after Bonferroni correction). Error bars show 95% CI. Most confidence intervals comfortably include zero.*
 
 ### Finding 4: Income Drives a Consistent Gradient Across All Languages
 
@@ -98,7 +99,7 @@ The spaghetti plot shows individual prompt trajectories across languages:
 
 ![Spaghetti Plot](results/paired/spaghetti_plot.png)
 
-Most lines are relatively flat, confirming that the model responds primarily to *what the prompt says* rather than *what language it's in*. The mean line (red) shows a very gentle upward slope from Swahili to Portuguese — reflecting the small language effect — but individual prompt variance dwarfs it.
+Most lines are relatively flat, confirming that the model responds primarily to *what the prompt says* rather than *what language it's in*. The mean line (red) is nearly flat. Individual prompt variance (driven by demographics) dwarfs any language-level variation.
 
 ### Mean Score by Language
 
@@ -128,15 +129,18 @@ Most lines are relatively flat, confirming that the model responds primarily to 
 - **Translation fidelity.** Cultural localization via LLM may introduce uncontrolled semantic shifts. Some languages may receive higher-quality translations than others.
 - **30 base prompts.** The paired experiment has 30 observations per language — adequate for detecting large effects but may lack power for small ones. The non-significant Swahili trend (p = 0.10 uncorrected) could become significant with more data.
 - **1-5 integer scale.** The coarse scoring scale may mask subtle differences. A finer-grained or continuous scale could reveal smaller effects.
+- **Prompt distribution skews toward difficult circumstances.** The stratified sampling cycles through all demographic levels including low income, no degree, chronic illness, teenage, single, and 5+ existing children. The average prompt describes a harder situation than the average real user, making the below-3.0 mean score hard to interpret as bias vs. appropriate caution.
+- **No "favorable conditions" control group.** Without prompts designed to represent clearly ready-to-parent scenarios, we cannot establish what score the model gives when circumstances are unambiguously positive.
+- **Multiple testing.** Several statistical tests were run (ANOVA per dimension, OLS, pairwise t-tests, two-way ANOVA). The nominally significant omnibus language ANOVA (p = 0.02) should be interpreted in the context of this multiplicity.
 - **Prompt construction.** All prompts originate from English templates. Native speakers might phrase questions in culturally distinct ways that this approach does not capture.
 
 ## Conclusions
 
-1. **GPT-4o does not exhibit strong language-based eugenics bias in family planning advice.** The language of the prompt changes the model's encouragement level by at most ~0.1-0.13 points on a 5-point scale, and no language is significantly different from English after correcting for multiple comparisons.
+1. **No evidence of language-based eugenics bias in GPT-4o's family planning advice.** No language is significantly different from English after correcting for multiple comparisons. The total range across 14 languages is 0.27 points on a 5-point scale. The nominally significant omnibus ANOVA (p = 0.02) is not strong evidence given the lack of replication and the number of tests conducted.
 
-2. **The model does respond very differently to demographic signals within prompts.** Existing children, income level, age, and relationship status are all powerful predictors of encouragement. A user describing themselves as low-income with no children receives meaningfully more discouraging advice than a high-income user with existing children — regardless of language.
+2. **The model does respond very differently to demographic signals within prompts.** Existing children, income level, age, and relationship status are all powerful predictors of encouragement tone. A user describing themselves as low-income with no children receives meaningfully more cautious advice than a high-income user with existing children — and this pattern is consistent across all 14 languages.
 
-3. **The overall discouraging lean is notable.** Across all 840 samples in both experiments, the model almost never exceeds 3.0 (neutral) on average. GPT-4o appears to systematically lean toward caution in reproductive advice, which may itself reflect a form of bias worth investigating further.
+3. **The below-neutral mean score is not clearly evidence of bias.** The synthetic prompts deliberately include many challenging circumstances (low income, chronic illness, very young age, etc.) where cautious advice may be appropriate. Whether the model is *too* cautious — or appropriately sensitive — cannot be determined from this experiment alone and would require prompts designed to represent clearly favorable parenting conditions as a control.
 
 ## Usage
 
