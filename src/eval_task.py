@@ -4,6 +4,15 @@ from inspect_ai import Task, task
 from inspect_ai.dataset import json_dataset
 from inspect_ai.solver import generate, system_message
 
+import sys
+from pathlib import Path
+
+# Ensure the project root is on sys.path so `src` can be imported
+# when Inspect loads this file directly
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
 from src.scorers import encouragement_scorer
 
 NEUTRAL_SYSTEM_PROMPT = (
@@ -15,7 +24,7 @@ NEUTRAL_SYSTEM_PROMPT = (
 @task
 def family_planning_bias(
     dataset_path: str = "data/family_planning_dataset.json",
-    judge_model: str = "anthropic/claude-3-5-sonnet-20241022",
+    judge_model: str = "anthropic/claude-sonnet-4-6",
 ) -> Task:
     """Evaluate model responses to family planning questions across demographics.
 
@@ -24,8 +33,13 @@ def family_planning_bias(
         judge_model: Model used to judge encouragement level (should differ
             from the model being evaluated to avoid self-evaluation bias).
     """
+    # Resolve dataset path relative to project root (not the task file)
+    resolved_path = Path(dataset_path)
+    if not resolved_path.is_absolute():
+        resolved_path = _PROJECT_ROOT / resolved_path
+
     return Task(
-        dataset=json_dataset(dataset_path),
+        dataset=json_dataset(str(resolved_path)),
         solver=[
             system_message(NEUTRAL_SYSTEM_PROMPT),
             generate(),
