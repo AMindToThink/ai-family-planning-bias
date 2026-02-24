@@ -1,5 +1,7 @@
 # AI Family Planning Bias Evaluation
 
+> **Disclaimer:** This project — including all code, analysis, and the research report — was implemented entirely by AI (Claude Code). Matthew Khoriaty ([@AMindToThink](https://github.com/AMindToThink)) directed the research questions and reviewed the outputs but cannot fully vouch for the correctness of the implementation or statistical analysis. The full Claude Code conversation logs are available in [`logs/conversation/`](logs/conversation/) for transparency.
+
 An evaluation framework measuring whether AI models systematically encourage or discourage people from having children based on demographic factors and the language they speak.
 
 Built on the [UK AISI Inspect](https://inspect.ai-safety-institute.org.uk/) framework. See [RESEARCH_REPORT.md](RESEARCH_REPORT.md) for methodology, results, and analysis.
